@@ -1,11 +1,11 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+// This page is now handled by the LandingPage component in the main app flow
 
 const Index = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+        <h1 className="mb-4 text-4xl font-bold">InvenTrak</h1>
+        <p className="text-xl text-muted-foreground">Smart POS & Inventory Management for Small Retailers</p>
       </div>
     </div>
   );
