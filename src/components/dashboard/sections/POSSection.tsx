@@ -4,7 +4,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Search, Plus, Minus, ShoppingCart, Receipt, Package } from 'lucide-react';
+import { Search, Plus, Minus, ShoppingCart, Receipt, Package, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 interface Product {
   id: string;
@@ -79,6 +80,67 @@ export const POSSection: React.FC = () => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
+  const generateInvoicePDF = () => {
+    const doc = new jsPDF();
+    const currentDate = new Date().toLocaleDateString();
+    const currentTime = new Date().toLocaleTimeString();
+    const invoiceNumber = `INV-${Date.now()}`;
+    
+    // Header
+    doc.setFontSize(20);
+    doc.setFont(undefined, 'bold');
+    doc.text('InvenTrak', 20, 30);
+    doc.setFontSize(14);
+    doc.setFont(undefined, 'normal');
+    doc.text('Invoice', 20, 45);
+    
+    // Invoice details
+    doc.setFontSize(10);
+    doc.text(`Invoice #: ${invoiceNumber}`, 20, 60);
+    doc.text(`Date: ${currentDate}`, 20, 70);
+    doc.text(`Time: ${currentTime}`, 20, 80);
+    
+    // Table header
+    doc.setFontSize(12);
+    doc.setFont(undefined, 'bold');
+    doc.text('Item', 20, 100);
+    doc.text('Qty', 120, 100);
+    doc.text('Price', 140, 100);
+    doc.text('Total', 170, 100);
+    
+    // Draw line under header
+    doc.line(20, 105, 190, 105);
+    
+    // Table content
+    doc.setFont(undefined, 'normal');
+    doc.setFontSize(10);
+    let yPosition = 115;
+    
+    cart.forEach((item) => {
+      doc.text(item.name, 20, yPosition);
+      doc.text(item.quantity.toString(), 120, yPosition);
+      doc.text(`₹${item.price}`, 140, yPosition);
+      doc.text(`₹${item.price * item.quantity}`, 170, yPosition);
+      yPosition += 10;
+    });
+    
+    // Total
+    doc.line(20, yPosition, 190, yPosition);
+    yPosition += 10;
+    doc.setFont(undefined, 'bold');
+    doc.text('Total Amount:', 140, yPosition);
+    doc.text(`₹${getTotalAmount()}`, 170, yPosition);
+    
+    // Footer
+    yPosition += 20;
+    doc.setFontSize(8);
+    doc.setFont(undefined, 'normal');
+    doc.text('Thank you for your business!', 20, yPosition);
+    doc.text('InvenTrak - Smart POS & Inventory Management', 20, yPosition + 10);
+    
+    return doc;
+  };
+
   const handleCheckout = () => {
     if (cart.length === 0) {
       toast({
@@ -89,10 +151,15 @@ export const POSSection: React.FC = () => {
       return;
     }
 
-    // Simulate checkout process
+    // Generate and download PDF invoice
+    const pdf = generateInvoicePDF();
+    const fileName = `invoice-${Date.now()}.pdf`;
+    pdf.save(fileName);
+
+    // Show success message
     toast({
       title: "Checkout Successful!",
-      description: `Transaction completed. Total: ₹${getTotalAmount()}`,
+      description: `Transaction completed. Invoice downloaded. Total: ₹${getTotalAmount()}`,
     });
     
     // Clear cart after successful checkout
@@ -223,8 +290,8 @@ export const POSSection: React.FC = () => {
                   onClick={handleCheckout}
                   disabled={cart.length === 0}
                 >
-                  <Receipt className="w-4 h-4 mr-2" />
-                  Checkout
+                  <Download className="w-4 h-4 mr-2" />
+                  Checkout & Download Invoice
                 </Button>
               </div>
             </CardContent>
