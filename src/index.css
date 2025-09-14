@@ -142,7 +142,7 @@
   }
   
   .feature-card {
-    @apply bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300 group;
+    @apply bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300;
   }
 
   /* Navigation */

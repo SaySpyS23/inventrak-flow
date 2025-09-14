@@ -238,7 +238,7 @@ export const MarketplaceSection: React.FC = () => {
       {/* Products Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredProducts.map((product) => (
-          <Card key={product.id} className="feature-card">
+          <Card key={product.id} className="group feature-card">
             <CardContent className="p-4">
               <div className="space-y-4">
                 {/* Product Image */}
